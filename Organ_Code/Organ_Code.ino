@@ -21,10 +21,10 @@ int index = 0;;
 int currentColor;
 int currentPoints[4] = {0, 0, 0, 0}; // red >> yellow >> green >> blue
 int codes[2][6] = {
-  {1,1,1,1,1,1}
+  {1, 1, 1, 1, 1, 1}
 };
 void setup() {
-  for (int i = 0; i < sizeof(pinAssignments); i++) {
+  for (int i = 0; i < 15; i++) {
     pinMode(pinAssignments[i], INPUT_PULLUP);
   }
   Serial.begin(9600);
@@ -35,6 +35,8 @@ void loop() {
   if (debugMode) {
     debug();
   }
+  //Serial.println(array_cmp(testArray, codes[0]));
+
   colorChecker();
   code();
 
@@ -42,13 +44,13 @@ void loop() {
 void code() {
   for (int i = 8; i < 14; i++) {
     if (digitalRead(pinAssignments[i]) == LOW) {
-        //Serial.println(array_cmp(currentCode, codes[0]));
+
+      currentCode[index] = int(coderDecoder(pinAssignments[i]));
+      index++;
       if (index == 6) {
         checkIt(currentCode);
         resetCode();
       }
-      currentCode[index] = int(coderDecoder(pinAssignments[i]));
-      index++;
       delay(1000);
       if (debugMode) {
         Serial.print("You Pressed:" );
@@ -70,7 +72,7 @@ void code() {
   }
 }
 bool checkIt(int code) {
-  array_cmp(testArray, codes[0]);
+  array_cmp(currentCode, codes[0]);
 }
 void colorChecker() {
   for (int i = 0; i < 4; i++) {
@@ -131,15 +133,15 @@ void debug() {
 
 
 }
-boolean array_cmp(int a[6], int b[6]){
+boolean array_cmp(int a[6], int b[6]) {
   int n;
   for (n = 0; n < 6; n++) {
     Serial.print("Array I Made value:");
-    Serial.println(a[n]); 
+    Serial.println(a[n]);
     Serial.print("Array I Stored value:");
     Serial.println(b[n]);
     if (a[n] != b[n]) {
-       Serial.println("Codes dont match");
+      Serial.println("Codes dont match");
       return false;
     }
   }
