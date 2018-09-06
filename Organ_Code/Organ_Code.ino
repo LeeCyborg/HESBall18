@@ -13,11 +13,16 @@
     ============
     22-27 code buttons
 */
+#include <Adafruit_NeoPixel.h>
+#define PIN 13
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(16, PIN, NEO_GRB + NEO_KHZ800);
+
 int debugMode = true;
 int pinAssignments[18] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 22, 23, 24, 25, 26, 27};
 int currentCode[6];
-int index = 0;;
+int index = 0;
 int currentColor;
+int pointAmounts[4] = {1, 5, 10, 25};
 int currentPoints[4] = {0, 0, 0, 0}; // red >> yellow >> green >> blue
 int codes[2][7] = {
   {1, 1, 1, 1, 1, 1, 10},
@@ -28,7 +33,8 @@ void setup() {
     pinMode(pinAssignments[i], INPUT_PULLUP);
   }
   Serial.begin(9600);
-
+  strip.begin();
+  strip.show();
 }
 
 void loop() {
@@ -47,6 +53,7 @@ void code() {
     if (digitalRead(pinAssignments[i]) == LOW) {
       currentCode[index] = int(coderDecoder(pinAssignments[i]));
       index++;
+      blinkTimes(3, 30);
       if (index == 6) {
         checkIt(currentCode);
         resetCode();
@@ -88,18 +95,26 @@ void lightsColorMaker(int color) {
   if (color == 0) {
     Serial.println("RED");
     currentColor = 0;
+    colorWipe(strip.Color(255, 0, 0), 50); // Red
+
   }
   if (color == 1) {
     Serial.println("YELLOW");
     currentColor = 1;
+    colorWipe(strip.Color(255, 255, 0), 50); // Red
+
   }
   if (color == 2) {
     Serial.println("GREEN");
     currentColor = 2;
+    colorWipe(strip.Color(0, 255, 0), 50); // Red
+
   }
   if (color == 3) {
     Serial.println("BLEW");
     currentColor = 3;
+    colorWipe(strip.Color(0, 0, 255), 50); // Red
+
   }
 }
 void resetCode() {
@@ -144,13 +159,14 @@ boolean array_cmp(int a[6], int b[6]) {
     Serial.println(b[n]);
     if (a[n] != b[n]) {
       Serial.println("Codes dont match");
-
+      blinkTimes(2, 1000);
       return false;
     }
   }
   addPoints(b[6]);
   displayPoints();
   Serial.println("Codes match");
+  blinkTimes(30, 30);
   return true;
 }
 
@@ -161,18 +177,52 @@ void addPoints (int points) {
 void displayPoints() {
   for (int i = 0; i < 4   ; i++) {
     Serial.print("This is the points for team #");
-    Serial.print(i); 
+    Serial.print(i);
     Serial.print(": ");
     Serial.println(currentPoints[i]);
   }
 }
 
-void smolPoints(){ 
-    for (int i = 3; i < 8; i++) {
+void smolPoints() {
+  for (int i = 3; i < 8; i++) {
     if (digitalRead(pinAssignments[i]) == LOW) {
       Serial.println(i);
-      return;
+      if (i == 7) {
+        addPoints(1);
+        blinkTimes(1, 200);
+      }
+      if (i == 4) {
+        addPoints(5);
+        blinkTimes(5, 200);
+      }
+      if (i == 5) {
+        addPoints(10);
+        blinkTimes(10, 200);
+      }
+      if (i == 6) {
+        addPoints(25);
+        blinkTimes(25, 200);
+      }
+      delay(300);
     }
   }
+  displayPoints();
+}
+void colorWipe(uint32_t c, uint8_t wait) {
+  for (uint16_t i = 0; i < strip.numPixels(); i++) {
+    strip.setPixelColor(i, c);
+    strip.show();
+  }
+}
+
+
+void blinkTimes(int times, int duration) {
+  for (int i = 0; i < times; i++) {
+    colorWipe(strip.Color(255, 255, 255), 50); // Red
+    delay(duration);
+    colorWipe(strip.Color(0, 0, 0), 50); // Red
+    delay(duration);
+  }
+  lightsColorMaker(currentColor);
 }
 
