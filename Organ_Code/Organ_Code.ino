@@ -15,7 +15,7 @@
 */
 #include <Adafruit_NeoPixel.h>
 #define PIN 13
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(16, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, PIN, NEO_GRB + NEO_KHZ800);
 
 int debugMode = true;
 int pinAssignments[18] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 22, 23, 24, 25, 26, 27};
