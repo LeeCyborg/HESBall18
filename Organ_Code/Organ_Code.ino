@@ -28,6 +28,7 @@ int codes[2][7] = {
   {1, 1, 1, 1, 1, 1, 10},
   {2, 2, 2, 2, 2, 2, 10}
 };
+
 void setup() {
   for (int i = 0; i < 15; i++) {
     pinMode(pinAssignments[i], INPUT_PULLUP);
@@ -46,8 +47,8 @@ void loop() {
   colorChecker();
   code();
   smolPoints();
-
 }
+
 void code() {
   for (int i = 8; i < 14; i++) {
     if (digitalRead(pinAssignments[i]) == LOW) {
@@ -55,7 +56,7 @@ void code() {
       index++;
       blinkTimes(3, 30);
       if (index == 6) {
-        checkIt(currentCode);
+        checkIt();
         resetCode();
       }
       delay(1000);
@@ -78,11 +79,13 @@ void code() {
     }
   }
 }
-bool checkIt(int code) {
-  for (int i; i < 2; i++) {
+
+void checkIt() {
+  for (int i = 0; i < 2; i++) {
     array_cmp(currentCode, codes[i]);
   }
 }
+
 void colorChecker() {
   for (int i = 0; i < 4; i++) {
     if (digitalRead(pinAssignments[i]) == LOW) {
@@ -91,6 +94,7 @@ void colorChecker() {
     }
   }
 }
+
 void lightsColorMaker(int color) {
   if (color == 0) {
     Serial.println("RED");
@@ -117,6 +121,7 @@ void lightsColorMaker(int color) {
 
   }
 }
+
 void resetCode() {
   for (int i = 0; i < 6; i++) {
     currentCode[i] = 0;
@@ -125,34 +130,16 @@ void resetCode() {
 }
 
 int coderDecoder(int whichPin) {
-  if (whichPin == 27) {
-    return 6;
-  }
-  if (whichPin == 26) {
-    return 5;
-  }
-  if (whichPin == 25) {
-    return 4;
-  }
-  if (whichPin == 24) {
-    return 3;
-  }
-  if (whichPin == 23) {
-    return 2;
-  }
-  if (whichPin == 22) {
-    return 1;
-  }
+  return whichPin - 21;
 }
+
 void debug() {
   //Serial.print("Current Color is: ");
   //Serial.println(currentColor);
-
-
 }
-boolean array_cmp(int a[6], int b[6]) {
-  int n;
-  for (n = 0; n < 6; n++) {
+
+bool array_cmp(int a[6], int b[6]) {
+  for (int n = 0; n < 6; n++) {
     Serial.print("Array I Made value:");
     Serial.println(a[n]);
     Serial.print("Array I Stored value:");
@@ -208,13 +195,16 @@ void smolPoints() {
   }
   displayPoints();
 }
+
 void colorWipe(uint32_t c, uint8_t wait) {
+  //TODO: Reimpliment wait usage, or remove wait parameter from all calls
+  wait = wait; //Just because everything calls this function with a wait parameter, but it isn't used
+  
   for (uint16_t i = 0; i < strip.numPixels(); i++) {
     strip.setPixelColor(i, c);
     strip.show();
   }
 }
-
 
 void blinkTimes(int times, int duration) {
   for (int i = 0; i < times; i++) {
