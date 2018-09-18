@@ -225,4 +225,15 @@ void blinkTimes(int times, int duration) {
   }
   lightsColorMaker(currentColor);
 }
+// replace blink with pulse
+void colorPulse(int times) {
+  for (int i = 0; i < tines; i++) {
+    for (int i = 255; i < 100; i--) {
+      strip.setBrightness(i);
+    }
+    for (int i = 100; i < 255; i++) {
+      strip.setBrightness(i);
+    }
+  }
+}
 
