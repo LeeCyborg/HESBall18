@@ -47,6 +47,8 @@
 
 #define MAX_COLOR_STRING 8
 
+#define IDLE_TIMEOUT (60 * 1000)
+
 #define NULL_BYTE_ARRAY { '\0' };
 
 // Enums
@@ -175,6 +177,9 @@ void setup() {
   // Start NeoPixels
   strip.begin();
   strip.show();
+
+  // Start with the idle animation (also lets us know it is ready)
+  idleAnimation();
 }
 
 /*###########
@@ -197,8 +202,15 @@ void loop() {
   // Detect which code buttons are pressed
   codeScan();
 
-  //
+  // Award small amounts of points for button presses
   smolPoints();
+
+  //TODO: Impliment call idleAnimation on timeout
+  /*
+  if (IDLE_TIMEOUT < timeNow - timeSinceLastInput) {
+    idleAnimation();
+  }
+  */
 }
 
 
@@ -393,7 +405,7 @@ void checkIt() {
     addPoints(codes[i][6]);
 
     //codeBts = (BlinkTimesStruct*)&codeMatchBts;
-    codePassLights();
+    winAnimation();
   }
   // The code was INcorrect!
   else {
@@ -401,7 +413,7 @@ void checkIt() {
     strcpy(debugString, DEBUG_NOMATCH_STR);
 #endif
 
-    codeFailLights();
+    loseAnimation();
   }
 
 #if DEBUG_MODE
@@ -535,9 +547,12 @@ void smolPoints() {
       int addSmallPoints = smallPointValues[i];
 
       addPoints(addSmallPoints);
+
       //blinkTimes(addSmallPoints, SMALL_POINTS_BLINK_DURATION);
       colorPulse(addSmallPoints);
+
       displayPoints();
+
       delay(SMALL_POINTS_DELAY);
     }
   }
@@ -586,21 +601,106 @@ void colorPulse(int times) {
   }
 }
 
+
 /*###########
-## Blink Times (Overloaded)
+## Color Pulse (Overloaded)
 ###########*/
 void colorPulse(BlinkTimesStruct *bts) {
   colorPulse(bts->times);
 }
 
-void codePassLights() {
 
+/*###########
+## Win Animation
+## The NeoPixel animation that plays a valid code has been entered
+## modified theater chase,
+## pass through with only value of current color 0-3 r y g b
+#
+# Called by: CheckIt
+#
+# Takes: void
+# Returns: Void
+###########*/
+void winAnimation() {
+  int currColor = colorValues[currentColor];
+
+  uint32_t winColors[4] =
+    {
+      strip.Color(255, 0,   0),
+      strip.Color(255, 255, 0),
+      strip.Color(0,   255, 0),
+      strip.Color(0,   0,   255)
+    };
+
+  uint32_t winColor = winColors[currColor];
+
+  for (int i = 0; i < 5; i++) {
+    for (int j = 0; j < 3; j++) {
+      for (uint16_t k = 0; k < strip.numPixels(); k += 3) {
+        strip.setPixelColor(k + j, winColor);
+      }
+
+      strip.show();
+
+      delay(50);
+
+      for (uint16_t l = 0; l < strip.numPixels(); l += 3) {
+        strip.setPixelColor(l + j, 0);
+      }
+    }
+  }
 }
 
-void codeFailLights() {
 
+/*###########
+## Lose Animation
+## The NeoPixel animation that plays an invalid code has been entered
+#
+# Called by: CheckIt
+#
+# Takes: void
+# Returns: Void
+###########*/
+void loseAnimation() {
+  int currColor = colorValues[currentColor];
+
+  uint32_t loseColors[4] =
+    {
+      strip.Color(255, 0,   0),
+      strip.Color(255, 255, 0),
+      strip.Color(0,   255, 0),
+      strip.Color(0,   0,   255)
+    };
+
+  uint32_t loseColor = loseColors[currColor];
+
+  for (int i = 0; i < 5; i++) {
+    for (int j = 0; j < 3; j++) {
+      for (uint16_t k = 0; k < strip.numPixels(); k += 3) {
+        strip.setPixelColor(k + j, loseColor);
+      }
+
+      strip.show();
+
+      delay(50);
+
+      for (uint16_t l = 0; l < strip.numPixels(); l += 3) {
+        strip.setPixelColor(l + j, 0);
+      }
+    }
+  }
 }
 
-void timeoutLights() {
-  
+
+/*###########
+## Idle Animation
+## The NeoPixel animation that plays while idle
+#
+# Called by: Setup, loop
+#
+# Takes: void
+# Returns: Void
+###########*/
+void idleAnimation() {
+  ;
 }
