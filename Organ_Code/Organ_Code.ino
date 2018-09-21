@@ -1,4 +1,3 @@
-
 #include <Adafruit_NeoPixel.h>
 
 // Debug defines
@@ -31,6 +30,7 @@
 // Delay defines
 #define PULSE_DELAY 0
 #define MID_PULSE_DELAY 0
+#define LOSOE_PAUSE_DELAY 1000
 #define CODE_SCAN_DELAY 200
 #define SMALL_POINTS_DELAY 100
 #define SMALL_POINTS_BLINK_DURATION 100
@@ -106,11 +106,11 @@ int codePins[CODE_LENGTH] = {22, 23, 24, 25, 26, 27};
 int currentCode[CODE_LENGTH] = {0, 0, 0, 0, 0, 0};
 int codePosition = 0;
 const char colorStrings[NUM_COLORS][MAX_COLOR_STRING] =
-  { "RED",
-    "YELLOW",
-    "GREEN",
-    "BLEW"
-  };
+{ "RED",
+  "YELLOW",
+  "GREEN",
+  "BLEW"
+};
 
 const BlinkTimesStruct codeMatchBts   = {30, 30};
 const BlinkTimesStruct codeNoMatchBts = {2,  1000};
@@ -122,27 +122,27 @@ int currentColor; // Is also current team
 // These MUST corispond to the order of enum TeamColors
 int colorIntensities[NUM_COLORS] = {50, 50, 50, 50};
 uint32_t colorValues[NUM_COLORS] =
-  {
-    strip.Color(255, 0,   0),
-    strip.Color(255, 255, 0),
-    strip.Color(0,   255, 0),
-    strip.Color(0,   0,   255)
-  };
+{
+  strip.Color(255, 0,   0),
+  strip.Color(255, 255, 0),
+  strip.Color(0,   255, 0),
+  strip.Color(0,   0,   255)
+};
 
 uint32_t lowColorValues[NUM_COLORS] =
-  {
-    strip.Color(255, 0,   0),
-    strip.Color(255, 255, 0),
-    strip.Color(0,   255, 0),
-    strip.Color(0,   0,   255)
-  };
+{
+  strip.Color(255, 0,   0),
+  strip.Color(255, 255, 0),
+  strip.Color(0,   255, 0),
+  strip.Color(0,   0,   255)
+};
 
 int blinkTimesIntensity[NUM_BLINK_TIMES_VALUES] = {50, 50};
 uint32_t blinkTimesValues[NUM_BLINK_TIMES_VALUES] =
-  {
-    strip.Color(255, 255, 255),
-    strip.Color(0, 0, 0)
-  };
+{
+  strip.Color(255, 255, 255),
+  strip.Color(0, 0, 0)
+};
 
 // Team Variables
 int teamScores[NUM_TEAMS] = {0, 0, 0, 0}; // red >> yellow >> green >> blue
@@ -183,17 +183,17 @@ void setup() {
 }
 
 /*###########
-## Main Loop
-## Main program loop
-#
-# Takes: Void
-# Returns: Void
-###########*/
+  ## Main Loop
+  ## Main program loop
+  #
+  # Takes: Void
+  # Returns: Void
+  ###########*/
 void loop() {
 #if DEMUG_MODE
-    debug();
-    //Serial.println(array_cmp(testArray, codes[0]));
-    //Serial.println(sizeof(codes));
+  debug();
+  //Serial.println(array_cmp(testArray, codes[0]));
+  //Serial.println(sizeof(codes));
 #endif
 
   // Detect which team color is selected
@@ -207,23 +207,23 @@ void loop() {
 
   //TODO: Impliment call idleAnimation on timeout
   /*
-  if (IDLE_TIMEOUT < timeNow - timeSinceLastInput) {
+    if (IDLE_TIMEOUT < timeNow - timeSinceLastInput) {
     idleAnimation();
-  }
+    }
   */
 }
 
 
 #if DEMUG_MODE
 /*###########
-## Debug
-## Prints debug information to serial
-#
-# Called by: loop
-#
-# Takes: Void
-# Returns: Void
-###########*/
+  ## Debug
+  ## Prints debug information to serial
+  #
+  # Called by: loop
+  #
+  # Takes: Void
+  # Returns: Void
+  ###########*/
 void debug() {
   Serial.print("Current Color is: ");
   Serial.println(currentColor);
@@ -232,14 +232,14 @@ void debug() {
 
 
 /*###########
-## Color Scanner
-## Iterates through the team color inputs and returns upon a press
-#
-# Called by: loop
-#
-# Takes: Void
-# Returns: Void
-###########*/
+  ## Color Scanner
+  ## Iterates through the team color inputs and returns upon a press
+  #
+  # Called by: loop
+  #
+  # Takes: Void
+  # Returns: Void
+  ###########*/
 void colorScan() {
   // Go through the colors
   for (int i = 0; i < NUM_COLORS; i++) {
@@ -255,14 +255,14 @@ void colorScan() {
 }
 
 /*###########
-## Set Color
-## Records the current color, and displays it physically (lights)
-#
-# Called by: colorScan, blinkTimes
-#
-# Takes: const int color: the color to set too
-# Returns: Void
-###########*/
+  ## Set Color
+  ## Records the current color, and displays it physically (lights)
+  #
+  # Called by: colorScan, blinkTimes
+  #
+  # Takes: const int color: the color to set too
+  # Returns: Void
+  ###########*/
 void setColor(const int color) {
   // Record the color
   currentColor = color;
@@ -280,14 +280,14 @@ void setColor(const int color) {
 
 
 /*###########
-## Code Scan
-## Detect which code buttons are pressed
-#
-# Called by: loop
-#
-# Takes: void
-# Returns: Void
-###########*/
+  ## Code Scan
+  ## Detect which code buttons are pressed
+  #
+  # Called by: loop
+  #
+  # Takes: void
+  # Returns: Void
+  ###########*/
 void codeScan() {
   // Iterate through the code pins
   for (int i = 0; i < CODE_LENGTH; i++) {
@@ -299,22 +299,22 @@ void codeScan() {
       // Advance to the next code position for the next code
       codePosition++;
 
-      #if DEBUG_MODE
-            Serial.print("You Pressed:" );
-            Serial.println(codePins[i]);
-            Serial.print("The Code is:");
-            Serial.print(currentCode[0]);
-            Serial.print(" , ");
-            Serial.print(currentCode[1]);
-            Serial.print(" , ");
-            Serial.print(currentCode[2]);
-            Serial.print(" , ");
-            Serial.print(currentCode[3]);
-            Serial.print(" , ");
-            Serial.print(currentCode[4]);
-            Serial.print(" , ");
-            Serial.println(currentCode[5]);
-      #endif
+#if DEBUG_MODE
+      Serial.print("You Pressed:" );
+      Serial.println(codePins[i]);
+      Serial.print("The Code is:");
+      Serial.print(currentCode[0]);
+      Serial.print(" , ");
+      Serial.print(currentCode[1]);
+      Serial.print(" , ");
+      Serial.print(currentCode[2]);
+      Serial.print(" , ");
+      Serial.print(currentCode[3]);
+      Serial.print(" , ");
+      Serial.print(currentCode[4]);
+      Serial.print(" , ");
+      Serial.println(currentCode[5]);
+#endif
 
       // Blink an arbitrary number of times
       //blinkTimes(3, 30);
@@ -333,20 +333,20 @@ void codeScan() {
 
 
 /*###########
-## Blink Times
-## Blinks a number of times with a delay between, then resets to team color
-#
-# Called by: codeScan, array_cmp, smolPoints
-# Takes: int times: The number of times to "blink"
-#        int duration: The ammount of time to wait between "blinks"
-#
-# Returns: Void
-###########*/
+  ## Blink Times
+  ## Blinks a number of times with a delay between, then resets to team color
+  #
+  # Called by: codeScan, array_cmp, smolPoints
+  # Takes: int times: The number of times to "blink"
+  #        int duration: The ammount of time to wait between "blinks"
+  #
+  # Returns: Void
+  ###########*/
 void blinkTimes(int times, int duration) {
   // "Blink" number of times
   for (int i = 0; i < times; i++) {
     // Each value in a blink
-    for(int j = 0; j < NUM_BLINK_TIMES_VALUES; j++) {
+    for (int j = 0; j < NUM_BLINK_TIMES_VALUES; j++) {
       // Perform the NeoPixel display
       //TODO: unhack
       if (0 == j) {
@@ -366,25 +366,25 @@ void blinkTimes(int times, int duration) {
 }
 
 /*###########
-## Blink Times (Overloaded)
-###########*/
+  ## Blink Times (Overloaded)
+  ###########*/
 void blinkTimes(BlinkTimesStruct *bts) {
   blinkTimes(bts->times, bts->duration);
 }
 
 /*###########
-## CheckIt
-## Compares all of the good codes to the inputted code
-#
-# Called by: codeScan
-#
-# Takes: void
-# Returns: Void
-###########*/
+  ## CheckIt
+  ## Compares all of the good codes to the inputted code
+  #
+  # Called by: codeScan
+  #
+  # Takes: void
+  # Returns: Void
+  ###########*/
 void checkIt() {
   int i;
   bool isCodeCorrect = false;
-//  BlinkTimesStruct *codeBts = (BlinkTimesStruct*)&codeNoMatchBts;
+  //  BlinkTimesStruct *codeBts = (BlinkTimesStruct*)&codeNoMatchBts;
 
   // Go through all of the codes
   for (i = 0; i < NUM_CODES; i++) {
@@ -427,14 +427,14 @@ void checkIt() {
 
 
 /*###########
-## resetCode
-## Resets the input code buffer and resets the code buffer index
-#
-# Called by: codeScan
-#
-# Takes: void
-# Returns: Void
-###########*/
+  ## resetCode
+  ## Resets the input code buffer and resets the code buffer index
+  #
+  # Called by: codeScan
+  #
+  # Takes: void
+  # Returns: Void
+  ###########*/
 void resetCode() {
   // Go through all of the digets of the code buffer
   for (int i = 0; i < CODE_LENGTH; i++) {
@@ -448,15 +448,15 @@ void resetCode() {
 
 
 /*###########
-## array_cmp
-##
-#
-# Called by: CheckIt
-#
-# Takes: int a[6]
-#        int b[6]
-# Returns: bool
-###########*/
+  ## array_cmp
+  ##
+  #
+  # Called by: CheckIt
+  #
+  # Takes: int a[6]
+  #        int b[6]
+  # Returns: bool
+  ###########*/
 bool array_cmp(int a[CODE_LENGTH], int b[CODE_LENGTH]) {
   for (int n = 0; n < CODE_LENGTH; n++) {
 
@@ -482,14 +482,14 @@ bool array_cmp(int a[CODE_LENGTH], int b[CODE_LENGTH]) {
 
 
 /*###########
-## addPoints
-##
-#
-# Called by: array_cmp
-#
-# Takes: int points: The number of points to add to the team
-# Returns: Void
-###########*/
+  ## addPoints
+  ##
+  #
+  # Called by: array_cmp
+  #
+  # Takes: int points: The number of points to add to the team
+  # Returns: Void
+  ###########*/
 void addPoints (int points) {
   // Add on points points to the teams score element
   teamScores[currentColor] += points;
@@ -500,16 +500,16 @@ void addPoints (int points) {
 
 
 /*###########
-## Display Points
-## Print all the teams points to the serial console
-#
-# !UPDATE! RED: 1, YELLOW: 2, GREEN: 3, BLEW: 4/n
-#
-# Called by: addPoints, smolPoints
-#
-# Takes: void
-# Returns: Void
-###########*/
+  ## Display Points
+  ## Print all the teams points to the serial console
+  #
+  # !UPDATE! RED: 1, YELLOW: 2, GREEN: 3, BLEW: 4/n
+  #
+  # Called by: addPoints, smolPoints
+  #
+  # Takes: void
+  # Returns: Void
+  ###########*/
 void displayPoints() {
   Serial.print(SERIAL_SCORE_UPDATE_STR);
 
@@ -526,14 +526,14 @@ void displayPoints() {
 
 
 /*###########
-## Smol Points
-##
-#
-# Called by: loop
-#
-# Takes: void
-# Returns: Void
-###########*/
+  ## Smol Points
+  ##
+  #
+  # Called by: loop
+  #
+  # Takes: void
+  # Returns: Void
+  ###########*/
 void smolPoints() {
   for (int i = 0; i < NUM_POINT_PINS; i++) {
     if (LOW == digitalRead(pointsPins[i])) {
@@ -560,11 +560,11 @@ void smolPoints() {
 
 
 /*###########
-## Color Wipe
-##
-# Takes: void
-# Returns: Void
-###########*/
+  ## Color Wipe
+  ##
+  # Takes: void
+  # Returns: Void
+  ###########*/
 void colorWipe(uint32_t toColor, int intensity) {
   for (uint16_t i = 0; i < strip.numPixels(); i++) {
     strip.setPixelColor(i, toColor);
@@ -576,11 +576,11 @@ void colorWipe(uint32_t toColor, int intensity) {
 
 
 /*###########
-## Color Pulse
-##
-# Takes: void
-# Returns: Void
-###########*/
+  ## Color Pulse
+  ##
+  # Takes: void
+  # Returns: Void
+  ###########*/
 void colorPulse(int times) {
   for (int i = 0; i < times; i += BRIGHTNESS_STEP) {
     for (int i = MAX_BRIGHTNESS; i < MIN_BRIGHTNESS; i--) {
@@ -603,34 +603,34 @@ void colorPulse(int times) {
 
 
 /*###########
-## Color Pulse (Overloaded)
-###########*/
+  ## Color Pulse (Overloaded)
+  ###########*/
 void colorPulse(BlinkTimesStruct *bts) {
   colorPulse(bts->times);
 }
 
 
 /*###########
-## Win Animation
-## The NeoPixel animation that plays a valid code has been entered
-## modified theater chase,
-## pass through with only value of current color 0-3 r y g b
-#
-# Called by: CheckIt
-#
-# Takes: void
-# Returns: Void
-###########*/
+  ## Win Animation
+  ## The NeoPixel animation that plays a valid code has been entered
+  ## modified theater chase,
+  ## pass through with only value of current color 0-3 r y g b
+  #
+  # Called by: CheckIt
+  #
+  # Takes: void
+  # Returns: Void
+  ###########*/
 void winAnimation() {
   int currColor = colorValues[currentColor];
 
   uint32_t winColors[4] =
-    {
-      strip.Color(255, 0,   0),
-      strip.Color(255, 255, 0),
-      strip.Color(0,   255, 0),
-      strip.Color(0,   0,   255)
-    };
+  {
+    strip.Color(255, 0,   0),
+    strip.Color(255, 255, 0),
+    strip.Color(0,   255, 0),
+    strip.Color(0,   0,   255)
+  };
 
   uint32_t winColor = winColors[currColor];
 
@@ -639,11 +639,8 @@ void winAnimation() {
       for (uint16_t k = 0; k < strip.numPixels(); k += 3) {
         strip.setPixelColor(k + j, winColor);
       }
-
       strip.show();
-
       delay(50);
-
       for (uint16_t l = 0; l < strip.numPixels(); l += 3) {
         strip.setPixelColor(l + j, 0);
       }
@@ -653,54 +650,59 @@ void winAnimation() {
 
 
 /*###########
-## Lose Animation
-## The NeoPixel animation that plays an invalid code has been entered
-#
-# Called by: CheckIt
-#
-# Takes: void
-# Returns: Void
-###########*/
+  ## Lose Animation
+  ## The NeoPixel animation that plays an invalid code has been entered
+  #
+  # Called by: CheckIt
+  #
+  # Takes: void
+  # Returns: Void
+  ###########*/
 void loseAnimation() {
-  int currColor = colorValues[currentColor];
+  for (int i = MAX_BRIGHTNESS; i < MIN_BRIGHTNESS; i--) {
+    strip.setBrightness(i);
+    strip.show();
+    delay(PULSE_DELAY);
+  }
 
-  uint32_t loseColors[4] =
-    {
-      strip.Color(255, 0,   0),
-      strip.Color(255, 255, 0),
-      strip.Color(0,   255, 0),
-      strip.Color(0,   0,   255)
-    };
+  delay(LOOSE_PAUSE_DELAY);
 
-  uint32_t loseColor = loseColors[currColor];
-
-  for (int i = 0; i < 5; i++) {
-    for (int j = 0; j < 3; j++) {
-      for (uint16_t k = 0; k < strip.numPixels(); k += 3) {
-        strip.setPixelColor(k + j, loseColor);
-      }
-
-      strip.show();
-
-      delay(50);
-
-      for (uint16_t l = 0; l < strip.numPixels(); l += 3) {
-        strip.setPixelColor(l + j, 0);
-      }
-    }
+  for (int i = MIN_BRIGHTNESS; i < MAX_BRIGHTNESS; i += BRIGHTNESS_STEP) {
+    strip.setBrightness(i);
+    strip.show();
+    delay(PULSE_DELAY);
   }
 }
 
 
 /*###########
-## Idle Animation
-## The NeoPixel animation that plays while idle
-#
-# Called by: Setup, loop
-#
-# Takes: void
-# Returns: Void
-###########*/
+  ## Idle Animation
+  ## The NeoPixel animation that plays while idle
+  #
+  # Called by: Setup, loop
+  #
+  # Takes: void
+  # Returns: Void
+  ###########*/
+
 void idleAnimation() {
-  ;
+  float pos = 0.0;
+  for (int x = 0; x < (strip.numPixels() * 50); x++)
+  {
+    pos = pos + 0.1;
+    for (int i = 0; i < strip.numPixels(); i++) {
+      float wave = sin(i + pos) * 127+200;
+      if (currentColor == 0) {
+        strip.setPixelColor(i, (int)random(wave), (int)random(wave) / 20, 0); // reds
+      } else if (currentColor == 1) {
+        strip.setPixelColor(i, (int)random(wave), (int)random(wave), 0); /// yellows
+      } else if (currentColor == 2) {
+        strip.setPixelColor(i, 0, (int)random(wave), (int)random(wave) / 20); // greens
+      } else if (currentColor = 3) {
+        strip.setPixelColor(i, (int)random(wave) / 20, 0, (int)random(wave)); // blue
+      }
+      strip.show();
+      delay(10);
+    }
+  }
 }
