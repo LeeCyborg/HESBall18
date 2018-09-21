@@ -26,7 +26,7 @@
 #define NUM_COLORS NUM_TEAMS
 #define NUM_POINT_PINS 5
 #define NUM_BLINK_TIMES_VALUES 2
-#define NUM_SMALL_POINT_VALUES 4
+#define NUM_SMALL_POINT_VALUES 5
 
 // Delay defines
 #define PULSE_DELAY 0
@@ -148,7 +148,7 @@ uint32_t blinkTimesValues[NUM_BLINK_TIMES_VALUES] =
 int teamScores[NUM_TEAMS] = {0, 0, 0, 0}; // red >> yellow >> green >> blue
 
 // Game Variables
-int smallPointValues[NUM_SMALL_POINT_VALUES] = {1, 5, 10, 25};
+int smallPointValues[NUM_SMALL_POINT_VALUES] = {1, 5, 10, 25, -50};
 int codes[NUM_CODES][LONG_CODE_LENGTH] = {
   {1, 1, 1, 1, 1, 1, 10},
   {2, 2, 2, 2, 2, 2, 10}
@@ -172,12 +172,14 @@ void setup() {
 
   // Start serial and set bitrate
   Serial.begin(9600);
-  Serial.println("READY!");
+  Serial.println("Arduino READY!");
 
   // Start NeoPixels
   strip.begin();
   strip.show();
 
+
+  displayPoints();
   // Start with the idle animation (also lets us know it is ready)
   idleAnimation();
 }
